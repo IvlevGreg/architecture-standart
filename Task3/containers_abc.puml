@@ -1,0 +1,43 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Диаграмма контейнера системы АБС банка «Стандарт»
+
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+AddElementTag("storage", $shape=RoundedBoxShape(), $bgColor="lightSkyBlue", $fontColor="white")
+AddElementTag("microService", $shape=EightSidedShape(), $bgColor="CornflowerBlue", $fontColor="white", $legendText="micro service\neight sided")
+
+
+System_Ext(bank_system,"Интернет-банк", "Отображает персонализированные ставки" )
+
+Enterprise_Boundary(c1, "АБС система банка «Стандарт»") {
+    Container(interface, "Desktop client interface", "Delphi", "Интерфейс сотрудников")
+    Container(security_service, "Security service", "Java", "Шифрует данные")
+    Container(abc_service, "ABC service", "Java", "Управляет ставками по депозитам и кредитам")
+    ContainerDb(abc_db, "ABC Database", "Oracle 12c", "Хранит информацию необходимую для расчета ставки", $tags = "storage")
+
+}
+
+Rel(interface, abc_service , "Использует")
+
+
+System_Ext(back_office, "Менеджеры бэк-офиса","Рассчитывает ставку, принимает решение по заявке", $sprite="users")
+System_Ext(sms_gateway, "SMS gateway", "Интеграция с телекомом")
+System_Ext(call_centre_system, "Кол-центр","Консультирует клиента", $sprite="users")
+
+Rel(bank_system, abc_service, "Передает заявку клиента")
+
+Rel( abc_service,security_service, "Дешифрует данные")
+Rel( abc_service,abc_db, "Использует")
+
+Rel(abc_service,sms_gateway, "Направляет событие")
+
+Rel_R(abc_service,back_office, "Направляет обработанную заявку")
+
+Rel(back_office,interface, "Вносят решение по заявке")
+
+Rel_L(call_centre_system,abc_service, "Запрашивает ставку/создает предзаявку")
+
+@enduml
