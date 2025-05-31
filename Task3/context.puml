@@ -12,7 +12,7 @@ Person(person, "Person")
 Enterprise_Boundary(c0, "Системы банка «Стандарт»") {
 System(call_centre_system, "Кол-центр","Консультирует клиента", $sprite="users")
 System(site,"Сайт банка", "Маркетинговая информация, подача заявок" )
-System(abc,"ABC система", " ", )
+System(abc,"ABC система", "Производит учёт операций по счетам и бухгалтерия", )
 System(bank_system,"Интернет-банк", "Отображает персонализированные ставки" )
 System(back_office, "Менеджеры бэк-офиса","Рассчитывает ставку, принимает решение по заявке", $sprite="users")
 
@@ -24,10 +24,11 @@ Rel(person, call_centre_system, "Звонит")
 Rel(person, bank_system, "Открывает депозит")
 Rel(person, site, "Посещает")
 
-Rel(site, call_centre_system, "Направляет заявку")
+Rel(site, call_centre_system, "Направляет обработанную заявку")
 
 Rel(call_centre_system,ext_call_centre_system, "Перенаправляет клиента, если не справляется")
 Rel(call_centre_system,abc, "создает предзаявку")
+Rel(call_centre_system,abc, "Запрашивает ставку")
 
 Rel(bank_system, abc, "Передает заявку")
 
