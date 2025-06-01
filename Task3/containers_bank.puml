@@ -1,0 +1,38 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Диаграмма контейнера системы «интернет-банк» банка «Стандарт»
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+
+
+Person_Ext(client, "Client")
+
+
+Enterprise_Boundary(c1, "Интернет-банк") {
+    Container(web_ui, "Web UI", "React", "Интерфейс пользователя")
+      Container(api_gateway, "API Gateway", "Nginx", "Маршрутизация запросов")
+      Container(app_service, "Application Service", "Java", "Бизнес-логика")
+      Container(security_service, "Security service", "Java", "Шифрует данные")
+
+      ContainerDb(db_ib, "Database", "MS SQL", "Хранит данные пользователей")
+      ContainerQueue(kafka, "Message Broker", "Apache Kafka", "Буферизация запросов")
+}
+
+System_Ext(abc_service,"ABC система", "Производит учёт операций по счетам и бухгалтерия", )
+
+
+
+Rel(client, web_ui, "Взаимодействует")
+Rel(web_ui, api_gateway, "API calls")
+Rel(api_gateway, app_service, "Обработка запросов")
+Rel(app_service, db_ib, "Чтение/запись")
+Rel_L(app_service, security_service, "Шифрует данные")
+Rel(app_service, kafka, "Отправка заявок")
+Rel(kafka, abc_service, "Отправка заявок")
+
+
+
+
+@enduml

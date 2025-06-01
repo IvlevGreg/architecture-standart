@@ -1,0 +1,24 @@
+@startuml containers_task4
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Диаграмма контейнеров: Система передачи ставок
+
+Enterprise_Boundary(c1, "ABC система банка «Стандарт»") {
+    Container(export_service, "Экспорт сервис", "PL/SQL", "Формирует файл ставок")
+        Container(abc_service, "ABC service", "Java", "Управляет ставками по депозитам и кредитам")
+
+    ContainerDb(db_abs, "Database", "Oracle", "Финансовые данные")
+}
+
+System(cc_system, "Кол-центр банка", "Java Spring Boot")
+System(sftp_server, "SFTP-сервер", "OpenSSH")
+System_Ext(ext_call_centre_system, "Партнерский кол-центр", "Внешняя CRM")
+
+Rel(cc_system, abc_service, "GET /rates")
+Rel(abc_service, db_abs, "Запрос данных")
+Rel(export_service, db_abs, "Ежедневный экспорт")
+Rel(export_service, sftp_server, "Направляет файл")
+Rel(sftp_server, ext_call_centre_system, "Автоимпорт")
+Rel(cc_system, ext_call_centre_system, "Переадресация звонка")
+
+@enduml
